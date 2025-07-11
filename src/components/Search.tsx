@@ -57,7 +57,7 @@ export default class Search extends Component<Props, State> {
     const { inputValue, showDropdown, storedTerm } = this.state;
 
     return (
-      <div className="relative w-full max-w-xl mx-auto mb-6">
+      <div className="relative w-full max-w-xl mx-auto mb-8 mt-6">
         <div className="flex space-x-2">
           <input
             type="text"
@@ -78,7 +78,7 @@ export default class Search extends Component<Props, State> {
 
         {showDropdown && storedTerm && (
           <div
-            className="absolute top-full left-0 w-full bg-white border border-t-0 rounded-b shadow z-10 cursor-pointer"
+            className="absolute top-full left-0 w-[489px] bg-white border border-t-0 rounded-b shadow z-10 cursor-pointer"
             onMouseDown={this.handleSelectStored}
           >
             <div className="px-4 py-2 hover:bg-gray-100">{storedTerm}</div>

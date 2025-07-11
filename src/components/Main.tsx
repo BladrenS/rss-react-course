@@ -1,112 +1,135 @@
 import { Component } from 'react';
-import axios, { AxiosError } from 'axios';
-import Search from './Search';
 import CardList from './CardList';
+import ErrorBoundary from './ErrorBoundary';
+import Search from './Search';
 
-interface Pokemon {
+interface PokemonData {
   name: string;
   description: string;
   image: string;
+  stats: {
+    hp: number;
+    attack: number;
+    defense: number;
+    speed: number;
+  };
+  abilities: string[];
+  height: number;
+  weight: number;
+  baseXP: number;
+}
+
+interface PokemonAPIResponse {
+  name: string;
+  sprites: {
+    front_default: string;
+  };
+  stats: {
+    base_stat: number;
+    stat: {
+      name: 'hp' | 'attack' | 'defense' | 'speed' | string;
+    };
+  }[];
+  abilities: {
+    ability: {
+      name: string;
+    };
+  }[];
+  types: {
+    type: {
+      name: string;
+    };
+  }[];
+  height: number;
+  weight: number;
+  base_experience: number;
 }
 
 interface State {
-  results: Pokemon[];
+  items: PokemonData[];
   loading: boolean;
   error: string | null;
 }
 
 export default class Main extends Component<object, State> {
-  constructor(props: object) {
-    super(props);
-    this.state = {
-      results: [],
-      loading: false,
-      error: null,
-    };
-  }
+  state: State = {
+    items: [],
+    loading: false,
+    error: null,
+  };
 
   componentDidMount() {
-    const term = localStorage.getItem('searchTerm') || '';
-    this.fetchData(term);
+    const stored = localStorage.getItem('searchTerm') || '';
+    this.fetchData(stored);
   }
 
-  fetchData = async (term: string) => {
-    this.setState({ loading: true, error: null });
-
+  fetchData = async (searchTerm: string) => {
     try {
-      if (term) {
-        const res = await axios.get(
-          `https://pokeapi.co/api/v2/pokemon/${term.toLowerCase()}`
-        );
+      this.setState({ loading: true, error: null, items: [] });
 
-        const types = res.data.types
-          .map((t: { type: { name: string } }) => t.type.name)
-          .join(', ');
-        const description = `Type(s): ${types}, Weight: ${res.data.weight}, Height: ${res.data.height}`;
-        const image = res.data.sprites.front_default;
+      const baseUrl = 'https://pokeapi.co/api/v2/pokemon';
 
-        this.setState({
-          results: [
-            {
-              name: res.data.name,
-              description,
-              image,
-            },
-          ],
-          loading: false,
-        });
-      } else {
-        const res = await axios.get(
-          'https://pokeapi.co/api/v2/pokemon?limit=20&offset=0'
-        );
+      if (!searchTerm) {
+        const res = await fetch(`${baseUrl}?limit=10`);
+        if (!res.ok) throw new Error(`API Error: ${res.status}`);
+        const data = await res.json();
 
         const detailed = await Promise.all(
-          res.data.results.map(async (p: { name: string; url: string }) => {
-            const poke = await axios.get(p.url);
-            const types = poke.data.types
-              .map((t: { type: { name: string } }) => t.type.name)
-              .join(', ');
-            const description = `Type(s): ${types}, Weight: ${poke.data.weight}, Height: ${poke.data.height}`;
-            const image = poke.data.sprites.front_default;
-            return {
-              name: poke.data.name,
-              description,
-              image,
-            };
+          data.results.map(async (item: { name: string; url: string }) => {
+            const resDetails = await fetch(item.url);
+            if (!resDetails.ok)
+              throw new Error(`Detail API Error: ${resDetails.status}`);
+            const details = await resDetails.json();
+            return this.transformPokemon(details);
           })
         );
 
-        this.setState({ results: detailed, loading: false });
-      }
-    } catch (error) {
-      const axiosError = error as AxiosError;
-      if (axiosError.isAxiosError) {
-        this.setState({
-          error: `Error: ${axiosError.response?.status || 'Unknown'} - ${axiosError.message}`,
-          loading: false,
-        });
+        this.setState({ items: detailed });
       } else {
-        this.setState({
-          error: 'An unexpected error occurred.',
-          loading: false,
-        });
-        console.error('Unexpected error:', error);
+        const res = await fetch(`${baseUrl}/${searchTerm.toLowerCase()}`);
+        if (!res.ok) throw new Error(`Pokémon "${searchTerm}" not found.`);
+        const details = await res.json();
+        const single = this.transformPokemon(details);
+        this.setState({ items: [single] });
       }
+    } catch (e) {
+      console.error('Error during fetch:', e);
+      this.setState({ error: (e as Error).message });
+    } finally {
+      this.setState({ loading: false });
     }
   };
 
-  handleSearch = (term: string) => {
-    const trimmed = term.trim();
-    localStorage.setItem('searchTerm', trimmed);
-    this.fetchData(trimmed);
+  transformPokemon = (data: PokemonAPIResponse): PokemonData => {
+    const hp = data.stats.find((s) => s.stat.name === 'hp')?.base_stat || 0;
+    const attack =
+      data.stats.find((s) => s.stat.name === 'attack')?.base_stat || 0;
+    const defense =
+      data.stats.find((s) => s.stat.name === 'defense')?.base_stat || 0;
+    const speed =
+      data.stats.find((s) => s.stat.name === 'speed')?.base_stat || 0;
+
+    const abilities = data.abilities.map((a) => a.ability.name);
+    const types = data.types.map((t) => t.type.name).join(', ');
+
+    return {
+      name: data.name,
+      description: `Type: ${types}`,
+      image: data.sprites.front_default || '',
+      stats: { hp, attack, defense, speed },
+      abilities,
+      height: data.height,
+      weight: data.weight,
+      baseXP: data.base_experience,
+    };
   };
 
   render() {
-    const { results, loading, error } = this.state;
+    const { items, loading, error } = this.state;
 
     return (
-      <div className="p-4 max-w-4xl mx-auto">
-        <Search onSearch={this.handleSearch} />
+      <ErrorBoundary>
+        <Search onSearch={this.fetchData} />
         {loading && (
           <div className="flex justify-center items-center mt-4 text-gray-600">
             <svg
@@ -129,12 +152,12 @@ export default class Main extends Component<object, State> {
                 d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16v-4l-3 3 3 3v-4a8 8 0 01-8-8z"
               ></path>
             </svg>
-            <span className="text-2xl">Loading...</span>
+            <span className="text-lg">Loading...</span>
           </div>
         )}
-        {error && <div className="text-red-600 text-center mt-4">{error}</div>}
-        {!loading && !error && <CardList items={results} />}
-      </div>
+        {error && <div className="text-center text-red-600 mt-4">{error}</div>}
+        {!loading && !error && <CardList items={items} />}
+      </ErrorBoundary>
     );
   }
 }
