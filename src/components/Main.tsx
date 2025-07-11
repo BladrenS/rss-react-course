@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import axios, { AxiosError } from 'axios';
 import Search from './Search';
+import CardList from './CardList';
 
 interface Pokemon {
   name: string;
@@ -101,9 +102,38 @@ export default class Main extends Component<object, State> {
   };
 
   render() {
+    const { results, loading, error } = this.state;
+
     return (
       <div className="p-4 max-w-4xl mx-auto">
         <Search onSearch={this.handleSearch} />
+        {loading && (
+          <div className="flex justify-center items-center mt-4 text-gray-600">
+            <svg
+              className="animate-spin h-5 w-5 mr-2 text-blue-500"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16v-4l-3 3 3 3v-4a8 8 0 01-8-8z"
+              ></path>
+            </svg>
+            <span className="text-2xl">Loading...</span>
+          </div>
+        )}
+        {error && <div className="text-red-600 text-center mt-4">{error}</div>}
+        {!loading && !error && <CardList items={results} />}
       </div>
     );
   }
