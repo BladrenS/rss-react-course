@@ -10,7 +10,7 @@ interface State {
   storedTerm: string;
 }
 
-export default class Search extends Component<Props, State> {
+export class Search extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     const stored = localStorage.getItem('searchTerm') || '';

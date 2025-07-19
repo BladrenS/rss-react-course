@@ -1,6 +1,6 @@
 import { Component } from 'react';
 
-export default class ErrorButton extends Component {
+export class ErrorButton extends Component {
   throwError = () => {
     throw new Error('Manual error triggered');
   };

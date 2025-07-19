@@ -16,7 +16,7 @@ interface CardProps {
   baseXP: number;
 }
 
-export default class Card extends Component<CardProps> {
+export class Card extends Component<CardProps> {
   render() {
     const {
       name,

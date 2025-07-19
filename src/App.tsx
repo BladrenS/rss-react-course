@@ -1,8 +1,8 @@
 import { Component } from 'react';
-import Header from './components/Header';
+import { Header } from './components/Header';
 import Main from './components/Main';
-import ErrorBoundary from './components/ErrorBoundary';
-import ErrorButton from './components/ErrorButton';
+import { ErrorBoundary } from './components/ErrorBoundary';
+import { ErrorButton } from './components/ErrorButton';
 
 export default class App extends Component {
   render() {
