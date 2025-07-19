@@ -1,29 +1,44 @@
 import { render, screen } from '@testing-library/react';
-import React from 'react';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 
-class Bomb extends React.Component {
-  componentDidMount() {
-    throw new Error('Boom!');
-  }
-  render() {
-    return null;
-  }
-}
+//Вспомогательный компонент, выбрасывающий ошибку при рендере
+const ProblemChild = () => {
+  throw new Error('Test error');
+};
 
-beforeAll(() => {
-  jest.spyOn(console, 'error').mockImplementation(() => {});
-});
+describe('ErrorBoundary', () => {
+  const consoleErrorSpy = jest
+    .spyOn(console, 'error')
+    .mockImplementation(() => {});
 
-afterAll(() => {
-  (console.error as jest.Mock).mockRestore();
-});
+  afterEach(() => {
+    consoleErrorSpy.mockClear();
+  });
 
-test('renders fallback UI on error', () => {
-  render(
-    <ErrorBoundary>
-      <Bomb />
-    </ErrorBoundary>
-  );
-  expect(screen.getByText(/something went wrong/i)).toBeInTheDocument();
+  afterAll(() => {
+    consoleErrorSpy.mockRestore();
+  });
+
+  it('catches and handles JavaScript errors in child components', () => {
+    render(
+      <ErrorBoundary>
+        <ProblemChild />
+      </ErrorBoundary>
+    );
+
+    expect(screen.getByText(/Something went wrong/i)).toBeInTheDocument();
+    expect(consoleErrorSpy).toHaveBeenCalled();
+  });
+
+  it('displays fallback UI when error occurs', () => {
+    render(
+      <ErrorBoundary>
+        <ProblemChild />
+      </ErrorBoundary>
+    );
+
+    expect(
+      screen.getByText('Something went wrong. Please refresh.')
+    ).toBeInTheDocument();
+  });
 });
