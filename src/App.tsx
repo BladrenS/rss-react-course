@@ -1,13 +1,18 @@
-import { Component } from 'react';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from 'react-router-dom';
+import { Main } from './pages/Main';
+import { About } from './pages/About';
+import { NotFound } from './pages/NotFound';
 import { Header } from './components/Header';
-import Main from './components/Main';
-import { ErrorBoundary } from './components/ErrorBoundary';
-import { ErrorButton } from './components/ErrorButton';
 
-export default class App extends Component {
+/*default class App extends Component {
   render() {
     return (
-      <ErrorBoundary>
+      
         <div className="min-h-screen bg-orange-100 p-4">
           <div className="max-w-3xl mx-auto bg-white rounded-lg shadow">
             <Header />
@@ -20,4 +25,19 @@ export default class App extends Component {
       </ErrorBoundary>
     );
   }
+}*/
+
+export function App() {
+  return (
+    <Router>
+      <Header />
+      <Routes>
+        <Route path="/" element={<Navigate to="/page/1" replace />} />
+        <Route path="/page/:page" element={<Main />} />
+        <Route path="/page/:page/details/:name" element={<Main />} />
+        <Route path="/about" element={<About />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Router>
+  );
 }
