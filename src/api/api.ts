@@ -7,7 +7,7 @@ export const fetchPokemonData = async (
   const baseUrl = 'https://pokeapi.co/api/v2/pokemon';
 
   if (!searchTerm) {
-    const res = await fetch(`${baseUrl}?limit=10`);
+    const res = await fetch(`${baseUrl}?limit=100`);
     if (!res.ok) throw new Error(`API Error: ${res.status}`);
     const data = await res.json();
 
@@ -24,7 +24,7 @@ export const fetchPokemonData = async (
     return detailed;
   } else {
     const res = await fetch(`${baseUrl}/${searchTerm.toLowerCase()}`);
-    if (!res.ok) throw new Error(`Pokémon "${searchTerm}" not found.`);
+    if (!res.ok) throw new Error(`Pokémon ${searchTerm} not found.`);
     const details = await res.json();
     return [transformPokemon(details)];
   }

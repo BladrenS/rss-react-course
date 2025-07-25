@@ -1,5 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import Main from '../components/Main';
+import { Main } from '../pages/Main';
 import userEvent from '@testing-library/user-event';
 
 const mockSinglePokemon = {
