@@ -4,10 +4,10 @@ import { PokemonData } from '../types/types';
 
 interface CardListProps {
   items: PokemonData[];
-  onItemClick: (name: string) => void;
+  //onItemClick: (name: string) => void;
 }
 
-export const CardList: FC<CardListProps> = ({ items, onItemClick }) => {
+export const CardList: FC<CardListProps> = ({ items /*, onItemClick */ }) => {
   if (!items || items.length === 0) {
     return (
       <div className="text-center text-gray-500 py-8">No Pokémon found.</div>
@@ -19,7 +19,7 @@ export const CardList: FC<CardListProps> = ({ items, onItemClick }) => {
       {items.map((pokemon) => (
         <div
           key={pokemon.name}
-          onClick={() => onItemClick(pokemon.name)}
+          //onClick={() => onItemClick(pokemon.name)}
           className="cursor-pointer"
         >
           <Card {...pokemon} />
