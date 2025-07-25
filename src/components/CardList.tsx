@@ -25,7 +25,7 @@ export const CardList: FC<CardListProps> = ({
       animate={{ marginRight: isDetailsVisible ? '25%' : 0 }}
       transition={{ duration: 0.3 }}
     >
-      <div className="p-4 max-w-3xl mx-auto">
+      <div className="p-4 max-w-2xl mx-auto flex flex-wrap justify-around">
         {items.map((pokemon) => (
           <div
             key={pokemon.name}

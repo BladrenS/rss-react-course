@@ -1,7 +1,7 @@
 import { FC, useEffect } from 'react';
-import { Card } from './Card';
 import { PokemonData } from '../types/types';
 import { motion, AnimatePresence } from 'framer-motion';
+import { DetailedCard } from './DetaledCard';
 
 interface DetailsProps {
   data: PokemonData | null;
@@ -44,7 +44,7 @@ export const Details: FC<DetailsProps> = ({
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: '100%', opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="fixed right-0 top-0 w-sm h-full bg-white shadow-lg overflow-y-auto p-4 z-20"
+            className="fixed right-0 top-0 w-sm h-full bg-pink-50 shadow-lg overflow-y-auto p-4 z-20"
           >
             <button
               onClick={onClose}
@@ -57,7 +57,7 @@ export const Details: FC<DetailsProps> = ({
                 Loading details...
               </div>
             ) : (
-              data && <Card {...data} />
+              data && <DetailedCard {...data} />
             )}
           </motion.div>
         </>
