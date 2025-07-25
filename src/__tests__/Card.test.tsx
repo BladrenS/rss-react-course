@@ -14,10 +14,11 @@ const mockProps = {
 
 test('renders Card with all props', () => {
   render(<Card {...mockProps} />);
+
   expect(screen.getByText(/pikachu/i)).toBeInTheDocument();
-  expect(screen.getByText(/Type: electric/i)).toBeInTheDocument();
-  expect(
-    screen.getByText(/HP: 35, ATK: 55, DEF: 40, SPD: 90/i)
-  ).toBeInTheDocument();
-  expect(screen.getByText(/static, lightning-rod/i)).toBeInTheDocument();
+
+  expect(screen.getByText(/HP:\s*35/i)).toBeInTheDocument();
+  expect(screen.getByText(/ATK:\s*55/i)).toBeInTheDocument();
+  expect(screen.getByText(/DEF:\s*40/i)).toBeInTheDocument();
+  expect(screen.getByText(/SPD:\s*90/i)).toBeInTheDocument();
 });

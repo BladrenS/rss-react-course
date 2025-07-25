@@ -1,7 +1,7 @@
 import { FC, useEffect } from 'react';
 import { PokemonData } from '../types/types';
 import { motion, AnimatePresence } from 'framer-motion';
-import { DetailedCard } from './DetaledCard';
+import { DetailedCard } from './DetailedCard';
 
 interface DetailsProps {
   data: PokemonData | null;
@@ -30,6 +30,7 @@ export const Details: FC<DetailsProps> = ({
         <>
           <motion.div
             key="backdrop"
+            data-testid="backdrop"
             initial={{ opacity: 0 }}
             animate={{ opacity: 0.5 }}
             exit={{ opacity: 0 }}
