@@ -12,6 +12,7 @@ import { useLocalStorage } from '../api/useLocalStorage';
 export const Main = () => {
   const [items, setItems] = useState<PokemonData[]>([]);
   const [loading, setLoading] = useState(false);
+  const [loadingDetails, setLoadingloadingDetails] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [details, setDetails] = useState<PokemonData | null>(null);
   const [storedTerm] = useLocalStorage('searchTerm', '');
@@ -33,7 +34,7 @@ export const Main = () => {
       setLoading(true);
       setError(null);
       setSearchTerm(term);
-      setSearchParams({ page: '1' }); // сброс на первую страницу
+      setSearchParams({ page: '1' });
 
       const result = await fetchPokemonData(term);
       setItems(result);
@@ -46,11 +47,15 @@ export const Main = () => {
 
   const fetchDetails = async (name: string) => {
     try {
+      setDetails(null);
+      setLoadingloadingDetails(true);
       const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
       const data = await res.json();
       setDetails(transformPokemon(data));
     } catch {
       setError('Error fetching details');
+    } finally {
+      setLoadingloadingDetails(false);
     }
   };
 
@@ -89,25 +94,33 @@ export const Main = () => {
   }, []);
 
   return (
-    <div className="p-4">
-      <Search onSearch={handleSearch} />
+    <div className="p-4 bg-orange-50 min-h-screen">
+      <Search onSearch={handleSearch} isDetailsVisible={!!selectedName} />
 
       {loading && <div className="text-center mt-4">Loading...</div>}
       {error && <div className="text-center text-red-500 mt-4">{error}</div>}
 
       {!loading && !error && (
-        <CardList items={paginatedItems} onItemClick={handleCardClick} />
+        <CardList
+          items={paginatedItems}
+          onItemClick={handleCardClick}
+          isDetailsVisible={!!selectedName}
+        />
       )}
 
-      {selectedName && details && (
-        <Details data={details} onClose={handleCloseDetails} />
-      )}
+      <Details
+        data={details}
+        isVisible={!!selectedName}
+        onClose={handleCloseDetails}
+        loading={loadingDetails}
+      />
 
       {!loading && !error && items.length > 0 && !searchTerm && (
         <Pagination
           currentPage={currentPage}
           totalPages={Math.ceil(items.length / itemsPerPage)}
           onPageChange={handlePageChange}
+          isDetailsVisible={!!selectedName}
         />
       )}
     </div>
