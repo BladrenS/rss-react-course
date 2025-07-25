@@ -7,12 +7,14 @@ import { fetchPokemonData } from '../api/api';
 import { PokemonData } from '../types/types';
 import { Details } from '../components/Details';
 import { transformPokemon } from '../utils/mapPokemon';
+import { useLocalStorage } from '../api/useLocalStorage';
 
 export const Main = () => {
   const [items, setItems] = useState<PokemonData[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [details, setDetails] = useState<PokemonData | null>(null);
+  const [storedTerm] = useLocalStorage('searchTerm', '');
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -83,7 +85,7 @@ export const Main = () => {
   }, [selectedName]);
 
   useEffect(() => {
-    handleSearch('');
+    handleSearch(storedTerm);
   }, []);
 
   return (
