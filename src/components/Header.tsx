@@ -1,11 +1,12 @@
-import { Component } from 'react';
+import { Link } from 'react-router-dom';
 
-export class Header extends Component {
-  render() {
-    return (
-      <div className="p-4 border-b">
-        <h1 className="text-2xl font-bold">Pokemon Search</h1>
-      </div>
-    );
-  }
-}
+export const Header = () => (
+  <div className="p-4 border-b flex justify-between">
+    <Link to="/" className="text-2xl font-bold">
+      Pokemon Search
+    </Link>
+    <Link to="/about" className="text-blue-500 hover:underline ">
+      About
+    </Link>
+  </div>
+);
