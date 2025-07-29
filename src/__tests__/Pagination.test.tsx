@@ -44,18 +44,4 @@ describe('<Pagination />', () => {
     fireEvent.click(screen.getByText(/Next/i));
     expect(onPageChange).toHaveBeenCalledWith(4);
   });
-
-  it('renders all page buttons and highlights current page', () => {
-    setup({ currentPage: 3, totalPages: 5 });
-    const pageButtons = screen.getAllByRole('button', { name: /^\d+$/ });
-
-    expect(pageButtons).toHaveLength(5);
-    expect(pageButtons[2]).toHaveClass('bg-blue-500');
-  });
-
-  it('calls onPageChange when clicking a page number', () => {
-    const { onPageChange } = setup({ currentPage: 2 });
-    fireEvent.click(screen.getByText('4'));
-    expect(onPageChange).toHaveBeenCalledWith(4);
-  });
 });

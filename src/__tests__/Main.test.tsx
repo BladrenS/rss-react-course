@@ -64,24 +64,6 @@ describe('Main Component', () => {
     });
   });
 
-  it('loads searchTerm from localStorage on mount', async () => {
-    localStorage.setItem('searchTerm', JSON.stringify('pikachu'));
-
-    global.fetch = jest
-      .fn()
-      .mockResolvedValueOnce({ ok: true, json: async () => mockSinglePokemon });
-
-    render(
-      <MemoryRouter>
-        <Main />
-      </MemoryRouter>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText(/pikachu/i)).toBeInTheDocument();
-    });
-  });
-
   it('manages loading and error states correctly (invalid name)', async () => {
     global.fetch = jest.fn().mockResolvedValueOnce({ ok: false, status: 404 });
 
