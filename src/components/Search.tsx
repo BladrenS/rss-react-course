@@ -17,6 +17,9 @@ export const Search: FC<Props> = ({ onSearch, isDetailsVisible }) => {
   }, [storedTerm]);
 
   const handleSearch = () => {
+    if (inputValue === '') {
+      localStorage.removeItem('searchTerm');
+    }
     const trimmed = inputValue.trim();
     onSearch(trimmed);
     if (trimmed) setStoredTerm(trimmed);

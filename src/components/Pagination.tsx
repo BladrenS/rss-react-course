@@ -27,23 +27,6 @@ export const Pagination: FC<PaginationProps> = ({
     }
   };
 
-  const renderPages = () => {
-    const pages = [];
-    for (let i = 1; i <= totalPages; i++) {
-      pages.push(
-        <Button
-          key={i}
-          variant={i === currentPage ? 'default' : 'outline'}
-          onClick={() => onPageChange(i)}
-          className="mx-1"
-        >
-          {i}
-        </Button>
-      );
-    }
-    return pages;
-  };
-
   return (
     <motion.div
       animate={{ marginRight: isDetailsVisible ? '25%' : 0 }}
@@ -53,7 +36,7 @@ export const Pagination: FC<PaginationProps> = ({
         <Button onClick={handlePrevious} disabled={currentPage === 1}>
           Previous
         </Button>
-        <div className="flex flex-wrap justify-center">{renderPages()}</div>
+        <div className="flex flex-wrap justify-center">Page {currentPage}</div>
         <Button onClick={handleNext} disabled={currentPage === totalPages}>
           Next
         </Button>

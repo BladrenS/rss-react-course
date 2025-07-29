@@ -12,22 +12,17 @@ import { useLocalStorage } from '../api/useLocalStorage';
 export const Main = () => {
   const [items, setItems] = useState<PokemonData[]>([]);
   const [loading, setLoading] = useState(false);
-  const [loadingDetails, setLoadingloadingDetails] = useState(false);
+  const [loadingDetails, setLoadingDetails] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [details, setDetails] = useState<PokemonData | null>(null);
   const [storedTerm] = useLocalStorage('searchTerm', '');
 
   const [searchParams, setSearchParams] = useSearchParams();
-
   const currentPage = Number(searchParams.get('page')) || 1;
   const selectedName = searchParams.get('details');
   const [searchTerm, setSearchTerm] = useState<string>('');
 
   const itemsPerPage = 10;
-  const paginatedItems = items.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
 
   const handleSearch = async (term: string) => {
     try {
@@ -36,7 +31,20 @@ export const Main = () => {
       setSearchTerm(term);
       setSearchParams({ page: '1' });
 
-      const result = await fetchPokemonData(term);
+      const result = await fetchPokemonData(term, 1);
+      setItems(result);
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchData = async (page: number) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const result = await fetchPokemonData(searchTerm, page);
       setItems(result);
     } catch (e) {
       setError((e as Error).message);
@@ -48,14 +56,14 @@ export const Main = () => {
   const fetchDetails = async (name: string) => {
     try {
       setDetails(null);
-      setLoadingloadingDetails(true);
+      setLoadingDetails(true);
       const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
       const data = await res.json();
       setDetails(transformPokemon(data));
     } catch {
       setError('Error fetching details');
     } finally {
-      setLoadingloadingDetails(false);
+      setLoadingDetails(false);
     }
   };
 
@@ -65,6 +73,7 @@ export const Main = () => {
       newParams.set('page', String(page));
       return newParams;
     });
+    fetchData(page);
   };
 
   const handleCardClick = (name: string) => {
@@ -90,8 +99,13 @@ export const Main = () => {
   }, [selectedName]);
 
   useEffect(() => {
-    handleSearch(storedTerm);
-  }, []);
+    if (storedTerm) {
+      setSearchTerm(storedTerm);
+      fetchData(currentPage);
+    } else {
+      fetchData(currentPage);
+    }
+  }, [currentPage]);
 
   return (
     <div className="p-4 bg-orange-50 min-h-screen">
@@ -102,7 +116,7 @@ export const Main = () => {
 
       {!loading && !error && (
         <CardList
-          items={paginatedItems}
+          items={items}
           onItemClick={handleCardClick}
           isDetailsVisible={!!selectedName}
         />
@@ -118,7 +132,7 @@ export const Main = () => {
       {!loading && !error && items.length > 0 && !searchTerm && (
         <Pagination
           currentPage={currentPage}
-          totalPages={Math.ceil(items.length / itemsPerPage)}
+          totalPages={Math.ceil(1000 / itemsPerPage)}
           onPageChange={handlePageChange}
           isDetailsVisible={!!selectedName}
         />
