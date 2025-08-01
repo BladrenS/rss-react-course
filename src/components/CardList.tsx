@@ -57,7 +57,7 @@ export const CardList: FC<CardListProps> = ({
       transition={{ duration: 0.3 }}
     >
       <motion.div
-        className="p-4 max-w-2xl mx-auto flex flex-wrap justify-around"
+        className="p-4 max-w-2xl mx-auto flex flex-wrap justify-around h-full"
         variants={containerVariants}
         initial="hidden"
         animate="visible"

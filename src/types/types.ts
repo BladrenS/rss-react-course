@@ -45,19 +45,3 @@ export interface State {
   loading: boolean;
   error: string | null;
 }
-
-export interface CardProps {
-  name: string;
-  description: string;
-  image: string;
-  stats: {
-    hp: number;
-    attack: number;
-    defense: number;
-    speed: number;
-  };
-  abilities: string[];
-  height: number;
-  weight: number;
-  baseXP: number;
-}

@@ -8,6 +8,7 @@ import { PokemonData } from '../types/types';
 import { Details } from '../components/Details';
 import { transformPokemon } from '../utils/mapPokemon';
 import { useLocalStorage } from '../api/useLocalStorage';
+import { Flyout } from '../components/Flyout';
 
 export const Main = () => {
   const [items, setItems] = useState<PokemonData[]>([]);
@@ -109,6 +110,7 @@ export const Main = () => {
 
   return (
     <div className="p-4 bg-orange-50 min-h-screen">
+      <Flyout></Flyout>
       <Search onSearch={handleSearch} isDetailsVisible={!!selectedName} />
 
       {loading && <div className="text-center mt-4">Loading...</div>}
