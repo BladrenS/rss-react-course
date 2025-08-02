@@ -14,7 +14,11 @@ export const Card = (item: PokemonData) => {
         onClick={(e) => e.stopPropagation()}
         className="absolute w-4 h-4"
       />
-      <img src={item.image} className="w-24 h-24 object-contain" />
+      <img
+        src={item.image}
+        alt={item.name}
+        className="w-24 h-24 object-contain"
+      />
       <div>
         <h2 className="text-xl font-bold capitalize">{item.name}</h2>
         <div className="text-sm mb-1">

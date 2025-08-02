@@ -1,12 +1,15 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { Header } from '../components/Header';
+import { ThemeProvider } from '../context/ThemeContext';
 
 describe('Header', () => {
   it('renders without crashing', () => {
     render(
       <MemoryRouter>
-        <Header />
+        <ThemeProvider>
+          <Header />
+        </ThemeProvider>
       </MemoryRouter>
     );
     expect(screen.getByText('Pokemon Search')).toBeInTheDocument();
@@ -15,7 +18,9 @@ describe('Header', () => {
   it('has correct HTML structure and classes', () => {
     render(
       <MemoryRouter>
-        <Header />
+        <ThemeProvider>
+          <Header />
+        </ThemeProvider>
       </MemoryRouter>
     );
     const heading = screen.getByText('Pokemon Search');

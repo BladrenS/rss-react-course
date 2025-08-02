@@ -25,6 +25,12 @@ const mockSinglePokemon = {
 
 const originalConsoleError = console.error;
 
+const fakeList = {
+  results: [
+    { name: 'pikachu', url: 'https://pokeapi.co/api/v2/pokemon/pikachu' },
+  ],
+};
+
 describe('Main Component', () => {
   beforeEach(() => {
     localStorage.clear();
@@ -123,6 +129,25 @@ describe('Main Component', () => {
         { name: 'pikachu', url: 'https://pokeapi.co/api/v2/pokemon/pikachu' },
       ],
     };
+
+    global.fetch = jest
+      .fn()
+      .mockResolvedValueOnce({ ok: true, json: async () => fakeList })
+      .mockResolvedValueOnce({ ok: true, json: async () => mockSinglePokemon });
+
+    render(
+      <MemoryRouter>
+        <Main />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText(/pikachu/i)).toBeInTheDocument();
+    });
+  });
+
+  it('loads from stored searchTerm in localStorage', async () => {
+    localStorage.setItem('searchTerm', JSON.stringify('pikachu'));
 
     global.fetch = jest
       .fn()
