@@ -109,7 +109,7 @@ export const Main = () => {
   }, [currentPage]);
 
   return (
-    <div className="p-4 bg-orange-50 min-h-screen">
+    <div className="p-4 bg-orange-50 min-h-screen dark:bg-gray-700 transition-all">
       <Flyout></Flyout>
       <Search onSearch={handleSearch} isDetailsVisible={!!selectedName} />
 

@@ -40,21 +40,23 @@ export const Search: FC<Props> = ({ onSearch, isDetailsVisible }) => {
             onFocus={() => setShowDropdown(true)}
             onBlur={() => setTimeout(() => setShowDropdown(false), 100)}
             placeholder="Search Pokémon"
-            className="w-full px-4 py-2 border rounded shadow"
+            className="w-full px-4 py-2 border rounded shadow dark:border-white dark:placeholder-white transition-all"
           />
           <button
             onClick={handleSearch}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            className="bg-neutral-900 text-white px-4 py-2 rounded hover:bg-blue-600 dark:hover:bg-neutral-700 cursor-pointer transition-all"
           >
             Search
           </button>
         </div>
         {showDropdown && storedTerm && (
           <div
-            className="absolute top-full left-0 w-[489px] bg-white border border-t-0 rounded-b shadow z-10 cursor-pointer"
+            className="absolute top-full left-0 w-[489px] bg-white border border-t-0 rounded-b shadow z-10 cursor-pointer dark:bg-gray-700 dark:-text-white transition-all"
             onMouseDown={() => setInputValue(storedTerm)}
           >
-            <div className="px-4 py-2 hover:bg-gray-100">{storedTerm}</div>
+            <div className="px-4 py-2 hover:bg-gray-100 dark:text-white transition-all">
+              {storedTerm}
+            </div>
           </div>
         )}
       </div>

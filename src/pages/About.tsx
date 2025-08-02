@@ -1,6 +1,6 @@
 export const About = () => {
   return (
-    <div className="p-4 text-center bg-orange-50 w-full h-screen">
+    <div className="p-4 text-center bg-orange-50 w-full h-screen dark:text-white dark:bg-gray-700 transition-all">
       <h2 className="text-2xl font-bold mb-2 w-lg m-auto">About</h2>
       <p className="w-lg m-auto">
         Aloha! I`m Denis, 27 years old, from frosty Omsk in Russia. I enjoy
@@ -16,7 +16,7 @@ export const About = () => {
         href="https://rs.school/courses/reactjs"
         target="_blank"
         rel="noopener noreferrer"
-        className="m-auto flex bg-[url('../../public/rss.svg')] bg-cover bg-center h-20 w-60 items-center justify-center fill-red-200 mt-10 hover:opacity-60 transition duration-200"
+        className="m-auto flex bg-[url('../../public/rss.svg')] bg-cover bg-center h-20 w-60 items-center justify-center mt-10 hover:opacity-60 transition duration-200"
       ></a>
     </div>
   );

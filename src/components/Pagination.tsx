@@ -36,7 +36,9 @@ export const Pagination: FC<PaginationProps> = ({
         <Button onClick={handlePrevious} disabled={currentPage === 1}>
           Previous
         </Button>
-        <div className="flex flex-wrap justify-center">Page {currentPage}</div>
+        <div className="flex flex-wrap justify-center dark:text-white transition-all">
+          Page {currentPage}
+        </div>
         <Button onClick={handleNext} disabled={currentPage === totalPages}>
           Next
         </Button>

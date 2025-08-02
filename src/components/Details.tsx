@@ -45,11 +45,11 @@ export const Details: FC<DetailsProps> = ({
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: '100%', opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="fixed right-0 top-0 w-sm h-full bg-pink-50 shadow-lg overflow-y-auto p-4 z-20"
+            className="fixed right-0 top-0 w-sm h-full bg-pink-50 shadow-lg overflow-y-auto p-4 z-20 dark:text-white dark:bg-gray-500 transition-all"
           >
             <button
               onClick={onClose}
-              className="mb-4 text-red-600 underline cursor-pointer"
+              className="mb-4 text-red-600 underline cursor-pointer dark:text-white"
             >
               Close
             </button>

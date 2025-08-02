@@ -6,7 +6,7 @@ export const Card = (item: PokemonData) => {
   const isSelected = selectedItems.some((i) => i.name === item.name);
 
   return (
-    <div className="border rounded-lg shadow-md p-4 mb-4 flex items-start space-x-4 bg-white w-3xs text-center relative">
+    <div className="border rounded-lg shadow-md p-4 mb-4 flex items-start space-x-4 bg-white w-3xs text-center relative dark:text-white dark:bg-gray-900 transition-all">
       <input
         type="checkbox"
         checked={isSelected}
