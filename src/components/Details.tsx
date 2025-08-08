@@ -1,0 +1,84 @@
+import { FC, useEffect } from 'react';
+import { PokemonData } from '../types/types';
+import { motion, AnimatePresence } from 'framer-motion';
+import { DetailedCard } from './DetailedCard';
+
+interface DetailsProps {
+  data: PokemonData | null;
+  isVisible: boolean;
+  loading: boolean;
+  onClose: () => void;
+}
+
+export const Details: FC<DetailsProps> = ({
+  data,
+  isVisible,
+  onClose,
+  loading,
+}) => {
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [onClose]);
+
+  useEffect(() => {
+    if (!isVisible) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [isVisible]);
+
+  return (
+    <AnimatePresence>
+      {isVisible && (
+        <>
+          <motion.div
+            key="backdrop"
+            data-testid="backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.5 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            onClick={onClose}
+            className="fixed inset-0 z-10 bg-black"
+            aria-hidden="true"
+          />
+
+          <motion.aside
+            key="details-panel"
+            initial={{ x: '100%', opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: '100%', opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed right-0 top-0 w-sm h-full bg-pink-50 shadow-lg overflow-y-auto p-4 z-20 dark:text-white dark:bg-gray-500"
+            role="dialog"
+            aria-modal="true"
+          >
+            <button
+              onClick={onClose}
+              className="mb-4 text-red-600 underline cursor-pointer dark:text-white"
+              aria-label="Close details"
+            >
+              Close
+            </button>
+
+            {loading ? (
+              <div className="text-center text-gray-600">
+                Loading details...
+              </div>
+            ) : (
+              data && <DetailedCard {...data} />
+            )}
+          </motion.aside>
+        </>
+      )}
+    </AnimatePresence>
+  );
+};
+
+export default Details;
