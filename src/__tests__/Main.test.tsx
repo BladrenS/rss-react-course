@@ -3,6 +3,7 @@ import { Main } from '../pages/Main';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { TextEncoder, TextDecoder } from 'util';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 global.TextEncoder = TextEncoder as unknown as typeof globalThis.TextEncoder;
 global.TextDecoder = TextDecoder as unknown as typeof globalThis.TextDecoder;
@@ -23,13 +24,29 @@ const mockSinglePokemon = {
   base_experience: 112,
 };
 
-const originalConsoleError = console.error;
-
 const fakeList = {
   results: [
     { name: 'pikachu', url: 'https://pokeapi.co/api/v2/pokemon/pikachu' },
   ],
 };
+
+const originalConsoleError = console.error;
+
+function renderWithClient(ui: React.ReactElement) {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
+
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <MemoryRouter>{ui}</MemoryRouter>
+    </QueryClientProvider>
+  );
+}
 
 describe('Main Component', () => {
   beforeEach(() => {
@@ -46,22 +63,12 @@ describe('Main Component', () => {
   });
 
   it('makes initial API call on mount (no search term)', async () => {
-    const fakeList = {
-      results: [
-        { name: 'pikachu', url: 'https://pokeapi.co/api/v2/pokemon/pikachu' },
-      ],
-    };
-
     global.fetch = jest
       .fn()
       .mockResolvedValueOnce({ ok: true, json: async () => fakeList })
       .mockResolvedValueOnce({ ok: true, json: async () => mockSinglePokemon });
 
-    render(
-      <MemoryRouter>
-        <Main />
-      </MemoryRouter>
-    );
+    renderWithClient(<Main />);
 
     expect(screen.getByText(/loading/i)).toBeInTheDocument();
 
@@ -73,27 +80,22 @@ describe('Main Component', () => {
   it('manages loading and error states correctly (invalid name)', async () => {
     global.fetch = jest.fn().mockResolvedValueOnce({ ok: false, status: 404 });
 
-    render(
-      <MemoryRouter>
-        <Main />
-      </MemoryRouter>
-    );
+    renderWithClient(<Main />);
 
     await waitFor(() => {
-      expect(screen.getByText(/api error: 404/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(/failed to fetch pokémon list/i)
+      ).toBeInTheDocument();
     });
   });
 
   it('calls API with correct parameter for search', async () => {
     global.fetch = jest
       .fn()
+      .mockResolvedValueOnce({ ok: true, json: async () => fakeList })
       .mockResolvedValueOnce({ ok: true, json: async () => mockSinglePokemon });
 
-    render(
-      <MemoryRouter>
-        <Main />
-      </MemoryRouter>
-    );
+    renderWithClient(<Main />);
 
     const input = screen.getByPlaceholderText(/search pokémon/i);
     const button = screen.getByText(/search/i);
@@ -112,11 +114,7 @@ describe('Main Component', () => {
   it('handles multiple errors (network & 500)', async () => {
     global.fetch = jest.fn().mockRejectedValueOnce(new Error('Network Error'));
 
-    render(
-      <MemoryRouter>
-        <Main />
-      </MemoryRouter>
-    );
+    renderWithClient(<Main />);
 
     await waitFor(() => {
       expect(screen.getByText(/network error/i)).toBeInTheDocument();
@@ -124,22 +122,12 @@ describe('Main Component', () => {
   });
 
   it('updates component state based on API response', async () => {
-    const fakeList = {
-      results: [
-        { name: 'pikachu', url: 'https://pokeapi.co/api/v2/pokemon/pikachu' },
-      ],
-    };
-
     global.fetch = jest
       .fn()
       .mockResolvedValueOnce({ ok: true, json: async () => fakeList })
       .mockResolvedValueOnce({ ok: true, json: async () => mockSinglePokemon });
 
-    render(
-      <MemoryRouter>
-        <Main />
-      </MemoryRouter>
-    );
+    renderWithClient(<Main />);
 
     await waitFor(() => {
       expect(screen.getByText(/pikachu/i)).toBeInTheDocument();
@@ -154,11 +142,7 @@ describe('Main Component', () => {
       .mockResolvedValueOnce({ ok: true, json: async () => fakeList })
       .mockResolvedValueOnce({ ok: true, json: async () => mockSinglePokemon });
 
-    render(
-      <MemoryRouter>
-        <Main />
-      </MemoryRouter>
-    );
+    renderWithClient(<Main />);
 
     await waitFor(() => {
       expect(screen.getByText(/pikachu/i)).toBeInTheDocument();
