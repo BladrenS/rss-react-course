@@ -24,6 +24,15 @@ export const Details: FC<DetailsProps> = ({
     return () => document.removeEventListener('keydown', handleEscape);
   }, [onClose]);
 
+  useEffect(() => {
+    if (!isVisible) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [isVisible]);
+
   return (
     <AnimatePresence>
       {isVisible && (
@@ -36,23 +45,28 @@ export const Details: FC<DetailsProps> = ({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
             onClick={onClose}
-            className="fixed inset-0 z-10"
+            className="fixed inset-0 z-10 bg-black"
+            aria-hidden="true"
           />
 
-          <motion.div
+          <motion.aside
             key="details-panel"
             initial={{ x: '100%', opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: '100%', opacity: 0 }}
             transition={{ duration: 0.3 }}
             className="fixed right-0 top-0 w-sm h-full bg-pink-50 shadow-lg overflow-y-auto p-4 z-20 dark:text-white dark:bg-gray-500"
+            role="dialog"
+            aria-modal="true"
           >
             <button
               onClick={onClose}
               className="mb-4 text-red-600 underline cursor-pointer dark:text-white"
+              aria-label="Close details"
             >
               Close
             </button>
+
             {loading ? (
               <div className="text-center text-gray-600">
                 Loading details...
@@ -60,9 +74,11 @@ export const Details: FC<DetailsProps> = ({
             ) : (
               data && <DetailedCard {...data} />
             )}
-          </motion.div>
+          </motion.aside>
         </>
       )}
     </AnimatePresence>
   );
 };
+
+export default Details;
